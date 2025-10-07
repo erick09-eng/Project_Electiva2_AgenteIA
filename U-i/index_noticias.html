@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Noticias y Novedades - Con IA</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#071026;
+      --panel:#0b1220;
+      --muted:#94a3b8;
+      --accent1:#7c3aed;
+      --accent2:#06b6d4;
+      --card-ghost: rgba(255,255,255,0.02);
+      --glass: rgba(255,255,255,0.03);
+      --radius:12px;
+      --ff: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--ff);
+      background:linear-gradient(180deg,#050616 0%, #071026 100%);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      line-height:1.4;
+    }
+
+    header{
+      padding:18px 22px;
+      background:linear-gradient(90deg, rgba(124,58,237,0.08), rgba(6,182,212,0.04));
+      display:flex;
+      align-items:center;
+      gap:12px;
+      border-bottom:1px solid rgba(255,255,255,0.02);
+    }
+    header h1{margin:0;font-size:18px}
+    header .meta{margin-left:auto;color:var(--muted);font-size:13px}
+
+    .container{
+      display:flex;
+      gap:20px;
+      padding:22px;
+      max-width:1200px;
+      margin:20px auto;
+    }
+
+    .section{
+      flex:2;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:18px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .section h2{margin-top:0}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent);
+      border-radius:10px;
+      padding:16px;
+      margin-bottom:16px;
+      border:1px solid rgba(255,255,255,0.02);
+      color:inherit;
+    }
+    .card h3{margin:0 0 8px 0; color:#fff}
+    .card p{color:var(--muted);margin:0 0 12px 0; line-height:1.5}
+    .card .date{color:var(--muted);font-size:12px;margin-bottom:12px}
+
+    .card button{
+      margin-right:10px;
+      background:var(--card-ghost);
+      border:0;
+      color:var(--muted);
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+    }
+    .card button.primary{
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      color:#021;
+    }
+    .card button:hover{ transform:translateY(-2px); transition:transform .12s ease; }
+
+    .sidebar{
+      flex:1;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius:var(--radius);
+      padding:16px;
+      border:1px solid rgba(255,255,255,0.03);
+      color:inherit;
+      min-width:240px;
+    }
+
+    .response{
+      background: rgba(255,255,255,0.02);
+      padding:12px;
+      border-radius:8px;
+      margin-top:12px;
+      min-height:60px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    /* Chat bubble */
+    .chat-bubble{
+      position:fixed;
+      bottom:22px;
+      right:22px;
+      width:68px;
+      height:68px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      cursor:pointer;
+      box-shadow:0 12px 30px rgba(6,182,212,0.12);
+      z-index:1500;
+      transition:transform .14s ease;
+    }
+    .chat-bubble:hover{ transform:translateY(-4px); }
+
+    /* Overlay - QUITAMOS EL BLUR */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,0.2); /* Más transparente */
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .28s ease;
+      z-index:1400;
+    }
+    .overlay.show{ opacity:1; pointer-events:auto; }
+
+    /* Chat box */
+    .chat-box{
+      position:fixed;
+      bottom:100px;
+      right:22px;
+      width:360px;
+      max-width: calc(100% - 44px);
+      background:linear-gradient(180deg,#07102a,#041022);
+      border-radius:12px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      box-shadow:0 20px 40px rgba(2,6,23,0.8);
+      border:1px solid rgba(124,58,237,0.08);
+      z-index:1501;
+      transform: translateX(120%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .36s cubic-bezier(.2,.9,.2,1), opacity .28s ease;
+    }
+    .chat-box.open{ transform: translateX(0); opacity:1; pointer-events:auto; }
+
+    .chat-header{ display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+    .chat-header .avatar{
+      width:44px;height:44;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#021;
+    }
+    .chat-header .title{font-weight:700;font-size:14px}
+
+    .chat-messages{
+      max-height:260px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding-right:6px;
+      margin-bottom:8px;
+    }
+
+    .bubble{padding:8px 10px;border-radius:12px;max-width:85%}
+    .bubble.user{ align-self:flex-end; background:rgba(255,255,255,0.03); color:inherit; }
+    .bubble.ai{ align-self:flex-start; background:linear-gradient(90deg,var(--accent2), var(--accent1)); color:#021; box-shadow:0 6px 18px rgba(124,58,237,0.08) }
+
+    .chat-controls{ display:flex; gap:8px; margin-top:0; }
+    .chat-controls input{
+      flex:1;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.04);
+      background:transparent;
+      color:inherit;
+    }
+    .chat-controls button{
+      padding:10px 12px;
+      border-radius:10px;
+      border:0;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      color:#021;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    @media (max-width:880px){
+      .container{ padding:18px; flex-direction:column; }
+      .chat-box{ right:12px; left:12px; width:auto; bottom:92px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📰 Noticias y Novedades</h1>
+    <div class="meta">Conectado a base de datos real</div>
+  </header>
+
+  <div class="container">
+    <!-- CREAR NOTICIAS - AHORA A LA IZQUIERDA -->
+    <div class="section">
+      <h2>✨ Crear Nueva Noticia</h2>
+      <div class="card">
+        <h3>Crear noticia manualmente</h3>
+        <button onclick="createNewsExample()">Crear Noticia de Ejemplo</button>
+        <p style="margin-top:12px;font-size:13px;color:var(--muted)">O usa el chat IA para crear noticias personalizadas</p>
+      </div>
+
+      <div class="card">
+        <h3>Búsquedas Rápidas</h3>
+        <button onclick="searchNews('inteligencia artificial')">IA & Tecnología</button>
+        <button onclick="searchNews('deportes')">Deportes</button>
+        <button onclick="searchNews('ciencia')">Ciencia</button>
+        <button onclick="searchNews('videojuegos')">Videojuegos</button>
+      </div>
+
+      <h2 style="margin-top:18px">🎯 Acciones Rápidas</h2>
+      <div class="card">
+        <button onclick="loadAllNews()">Cargar todas las noticias</button>
+        <button class="primary" onclick="searchNews('tecnología')">Noticias de Tecnología</button>
+      </div>
+    </div>
+
+    <!-- NOTICIAS REALES - AHORA EN EL CENTRO -->
+    <div class="section">
+      <h2>📰 Noticias</h2>
+      <div id="noticias-container">
+        <!-- Las noticias reales se cargarán aquí -->
+      </div>
+    </div>
+
+    <!-- Sidebar - SE MANTIENE A LA DERECHA -->
+    <div class="sidebar">
+      <h3>🤖 Agente IA</h3>
+      <ul>
+        <li>Buscar noticias</li>
+        <li>Crear nuevas noticias</li>
+        <li>Filtrar por categorías</li>
+        <li>Resumir contenido</li>
+      </ul>
+      
+      <h4 style="margin-top:16px">Estadísticas</h4>
+      <div style="margin-top:8px;color:var(--muted);font-size:13px">
+        Noticias totales: <strong id="total-noticias">0</strong>
+      </div>
+      
+      <div class="response" id="ai-response">
+        Las respuestas de la IA aparecerán aquí...
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay SIN BLUR -->
+  <div class="overlay" id="overlay"></div>
+  <div class="chat-bubble" id="chat-bubble" title="Abrir asistente IA">💬</div>
+
+  <div class="chat-box" id="chat-box">
+    <div class="chat-header">
+      <div class="avatar">IA</div>
+      <div class="title">Asistente de Noticias</div>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-controls">
+      <input id="chat-input" placeholder="Pregunta sobre noticias...">
+      <button id="chat-send">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentNews = [];
+
+    // 🔄 FUNCIÓN PARA CONECTAR CON LA API DE NOTICIAS
+    async function fetchFromNewsAgent(consulta) {
+      try {
+        const response = await fetch('http://127.0.0.1:5001/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ consulta: consulta }),
+        });
+        
+        if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
+        const result = await response.json();
+        return result.resultado;
+        
+      } catch (error) {
+        console.error('Error al conectar con la API:', error);
+        addAIMessage('No se pudo conectar con el agente. Verifica que el servidor esté corriendo.');
+        return null;
+      }
+    }
+
+    // 📰 FUNCIONES PARA RENDERIZAR NOTICIAS
+    function renderNews(noticias = []) {
+      const container = document.getElementById('noticias-container');
+      container.innerHTML = '';
+      
+      if (!noticias || noticias.length === 0) {
+        container.innerHTML = '<div class="card"><p>No se encontraron noticias</p></div>';
+        document.getElementById('total-noticias').textContent = '0';
+        return;
+      }
+      
+      noticias.forEach(noticia => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${noticia.titulo || 'Sin título'}</h3>
+          <div class="date">Fecha: ${noticia.fecha || 'No especificada'}</div>
+          <p>${noticia.contenido || 'Sin contenido disponible'}</p>
+          <div style="font-size:12px;color:var(--muted)">ID: ${noticia.id || 'N/A'}</div>
+        `;
+        container.appendChild(card);
+      });
+      
+      document.getElementById('total-noticias').textContent = noticias.length;
+      currentNews = noticias;
+      updateAIResponse(`Encontré ${noticias.length} noticia(s)`);
+    }
+
+    // 🔍 FUNCIONES DE BÚSQUEDA
+    async function loadAllNews() {
+      updateAIResponse("Cargando todas las noticias...");
+      const resultado = await fetchFromNewsAgent('mostrar todas las noticias');
+      handleNewsResponse(resultado);
+    }
+
+    async function searchNews(termino) {
+      updateAIResponse(`Buscando: ${termino}...`);
+      const resultado = await fetchFromNewsAgent(`buscar noticias ${termino}`);
+      handleNewsResponse(resultado);
+    }
+
+    async function createNewsExample() {
+      const resultado = await fetchFromNewsAgent('crear noticia titulo Ejemplo de Noticia contenido Esta es una noticia de ejemplo creada desde el frontend fecha 2024-10-05');
+      handleNewsResponse(resultado);
+    }
+
+    // 💬 MANEJO DE RESPUESTAS DEL AGENTE
+    function handleNewsResponse(resultado) {
+      if (!resultado) return;
+
+      if (resultado.status === 'success') {
+        const data = resultado.data;
+        
+        // Si es un array de noticias
+        if (Array.isArray(data)) {
+          renderNews(data);
+        }
+        // Si data tiene propiedad result con array
+        else if (data && Array.isArray(data.result)) {
+          renderNews(data.result);
+        }
+        // Si es mensaje de creación
+        else if (typeof data === 'string' || (data && typeof data.result === 'string')) {
+          const mensaje = typeof data === 'string' ? data : data.result;
+          updateAIResponse(mensaje);
+          // Recargar lista después de crear
+          setTimeout(() => loadAllNews(), 1000);
+        }
+        else {
+          updateAIResponse("Formato de respuesta no reconocido");
+        }
+      } 
+      else if (resultado.status === 'no_tool') {
+        updateAIResponse(resultado.message);
+      }
+      else {
+        updateAIResponse(resultado.message || "Error en la consulta");
+      }
+    }
+
+    // 💬 FUNCIONES DEL CHAT
+    function addUserMessage(text) {
+      const el = document.createElement('div');
+      el.className = 'bubble user';
+      el.textContent = text;
+      document.getElementById('chat-messages').appendChild(el);
+      document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+    }
+
+    function addAIMessage(text) {
+      const el = document.createElement('div');
+      el.className = 'bubble ai';
+      el.textContent = text;
+      document.getElementById('chat-messages').appendChild(el);
+      document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+    }
+
+    function updateAIResponse(text) {
+      document.getElementById('ai-response').textContent = text;
+    }
+
+    async function sendMessage(message) {
+      if (!message.trim()) return;
+      
+      addUserMessage(message);
+      document.getElementById('chat-input').value = '';
+      
+      // Mensaje especial para creación de noticias
+      if (message.toLowerCase().includes('crear noticia')) {
+        addAIMessage("Creando noticia...");
+      }
+      
+      const resultado = await fetchFromNewsAgent(message);
+      handleNewsResponse(resultado);
+    }
+
+    // 🎯 EVENT LISTENERS DEL CHAT
+    const bubble = document.getElementById('chat-bubble');
+    const chatBox = document.getElementById('chat-box');
+    const overlay = document.getElementById('overlay');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+
+    function openChat(){
+      overlay.classList.add('show');
+      chatBox.classList.add('open');
+      document.getElementById('chat-messages').innerHTML = '';
+      
+      // Mensajes de bienvenida
+      addAIMessage('Hola! Soy tu asistente de noticias. Puedo ayudarte a buscar y crear noticias.');
+      addAIMessage("Ejemplos: 'mostrar todas las noticias', 'buscar noticias tecnología', 'crear noticia título Nueva noticia contenido Texto fecha 2024-10-05'");
+      
+      chatInput.focus();
+    }
+
+    function closeChat(){
+      overlay.classList.remove('show');
+      chatBox.classList.remove('open');
+    }
+
+    bubble.addEventListener('click', () => {
+      chatBox.classList.contains('open') ? closeChat() : openChat();
+    });
+    overlay.addEventListener('click', closeChat);
+
+    chatSend.addEventListener('click', () => {
+      sendMessage(chatInput.value);
+    });
+
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') chatSend.click();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeChat();
+    });
+
+    // 🚀 INICIALIZACIÓN
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar noticias al iniciar
+      setTimeout(() => loadAllNews(), 1000);
+    });
+  </script>
+</body>
+</html>
