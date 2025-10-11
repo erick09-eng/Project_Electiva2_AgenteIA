@@ -65,7 +65,7 @@ def info():
     })
 
 if __name__ == "__main__":
-    print("🎮 API de Agente de Videojuegos iniciada")
-    print("📍 Endpoint principal: POST http://localhost:5000/query")
-    print("🔍 Health check: GET http://localhost:5000/health")
+    print("API de Agente de Videojuegos iniciada")
+    print("Endpoint principal: POST http://localhost:5000/query")
+    print("Health check: GET http://localhost:5000/health")
     app.run(debug=True, host="0.0.0.0", port=5000)

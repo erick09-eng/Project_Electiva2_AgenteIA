@@ -28,22 +28,22 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
     print("Conectando a MongoDB para Noticias...")
     try:
         client = MongoClient("mongodb://localhost:27017/")
-        db = client["noticiasdb"]  # ✅ Base de datos de noticias
-        noticias_collection = db["noticias"]  # ✅ Colección de noticias
-        
-        print("✅ Conectado a MongoDB - noticiasdb.noticias")
+        db = client["noticiasdb"]  
+        noticias_collection = db["noticias"]  
+
+        print("Conectado a MongoDB - noticiasdb.noticias")
         yield AppContext(
             mongo_client=client,
             db=db, 
             noticias_collection=noticias_collection
         )
     except Exception as e:
-        print(f"❌ Error conectando a MongoDB: {e}")
+        print(f"Error conectando a MongoDB: {e}")
         raise
     finally:
         if 'client' in locals():
             client.close()
-            print("🔌 Conexión a MongoDB cerrada.")
+            print("Conexión a MongoDB cerrada.")
 
 # --- 3. Creación del Servidor MCP ---
 mcp = FastMCP("NewsServer", lifespan=app_lifespan)
@@ -127,9 +127,9 @@ async def create_news(titulo: str, contenido: str, fecha: str, ctx: Context) -> 
     }
     
     collection.insert_one(nueva_noticia)
-    return f"✅ Noticia '{titulo}' creada con ID {next_id}"
+    return f"Noticia '{titulo}' creada con ID {next_id}"
 
 # --- 5. Ejecución del Servidor ---
 if __name__ == "__main__":
-    print("📰 Iniciando servidor MCP para Noticias...")
+    print("Iniciando servidor MCP para Noticias...")
     mcp.run()

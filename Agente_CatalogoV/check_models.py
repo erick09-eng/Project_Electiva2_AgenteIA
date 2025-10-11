@@ -6,7 +6,7 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-print("📋 Modelos disponibles:")
+print("Modelos disponibles:")
 for model in genai.list_models():
     if 'generateContent' in model.supported_generation_methods:
-        print(f"✅ {model.name}")
+        print(f"{model.name}")
