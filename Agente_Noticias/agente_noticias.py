@@ -85,7 +85,7 @@ async def process_query(prompt: str, session: ClientSession) -> Dict[str, Any]:
             tool_args = tool_data.get("args", {})
             
             if tool_name in TOOL_MAP:
-                print(f"📰 LLM -> Herramienta: '{tool_name}', Args: {tool_args}")
+                print(f"LLM -> Herramienta: '{tool_name}', Args: {tool_args}")
                 
                 result = await session.call_tool(tool_name, arguments=tool_args)
 

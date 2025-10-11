@@ -1,111 +1,399 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Catálogo de Videojuegos - Con IA</title>
   <style>
-    :root{
-      --bg:#0b0f1a;
-      --card:#0f1724;
-      --muted:#9aa7bf;
-      --accent1:#7c3aed;
-      --accent2:#06b6d4;
-      --card-ghost: rgba(255,255,255,0.02);
+    :root {
+      --bg: #0b0f1a;
+      --card: #0f1724;
+      --muted: #9aa7bf;
+      --accent1: #7c3aed;
+      --accent2: #06b6d4;
+      --card-ghost: rgba(255, 255, 255, 0.02);
     }
-    *{box-sizing:border-box;font-family:Inter, system-ui, Arial; color: #e6eef8;}
-    body{margin:0;background:linear-gradient(180deg,#05060a 0%, #071021 100%);min-height:100vh;}
-    header{padding:18px 24px;background:linear-gradient(90deg, rgba(124,58,237,0.12), rgba(6,182,212,0.06));display:flex;align-items:center;gap:12px}
-    header h1{margin:0;font-size:18px}
-    .layout{max-width:1200px;margin:20px auto;padding:0 18px;}
-    .controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-    .search{display:flex;gap:8px;align-items:center}
-    .search input{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-    .filters{display:flex;gap:8px;align-items:center}
-    .filter{padding:8px 10px;border-radius:10px;background:var(--card-ghost);font-size:13px;color:var(--muted);cursor:pointer}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-height:180px;display:flex;flex-direction:column;justify-content:space-between}
-    .card .cover{height:80px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;margin-bottom:12px}
-    .card h3{margin:0 0 8px 0;font-size:16px;color:#fff}
-    .meta{font-size:13px;color:var(--muted);margin-bottom:8px;line-height:1.4}
-    .game-info{font-size:12px;color:var(--muted);margin-top:8px}
-    .game-info div{margin-bottom:4px}
-    .price{font-weight:700;color:#fff}
-    .card .actions{display:flex;gap:8px;align-items:center;margin-top:12px}
-    .btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer;background:var(--card-ghost);color:var(--muted);font-size:13px}
-    .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#021;font-weight:700}
-    .empty-cover{height:80px;border-radius:8px;background:linear-gradient(90deg,#0b1220,#071021);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px}
 
-    /* Sidebar summary */
-    .summary{margin-top:18px;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border:1px solid rgba(255,255,255,0.03);}
-    .summary h4{margin:0 0 8px 0}
-    .tag{display:inline-block;padding:6px 8px;border-radius:8px;background:var(--card-ghost);font-size:13px;color:var(--muted);margin-right:6px;margin-bottom:6px;cursor:pointer}
+    * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, Arial;
+      color: #e6eef8;
+    }
 
-    footer{max-width:1200px;margin:18px auto;padding:12px 18px;color:var(--muted);font-size:13px}
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #05060a 0%, #071021 100%);
+      min-height: 100vh;
+    }
 
-    /* Chat bubble (right) */
+    header {
+      padding: 18px 24px;
+      background: linear-gradient(90deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.06));
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 18px
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 18px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px
+    }
+
+    .search {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .search input {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: transparent;
+      color: inherit
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .filter {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: var(--card-ghost);
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between
+    }
+
+    .card .cover {
+      height: 80px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px
+    }
+
+    .card h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #fff
+    }
+
+    .meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      line-height: 1.4
+    }
+
+    .game-info {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px
+    }
+
+    .game-info div {
+      margin-bottom: 4px
+    }
+
+    .price {
+      font-weight: 700;
+      color: #fff
+    }
+
+    .card .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px
+    }
+
+    .btn {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 0;
+      cursor: pointer;
+      background: var(--card-ghost);
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .btn.primary {
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color: #021;
+      font-weight: 700
+    }
+
+    .empty-cover {
+      height: 80px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #0b1220, #071021);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .summary {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .summary h4 {
+      margin: 0 0 8px 0
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: var(--card-ghost);
+      font-size: 13px;
+      color: var(--muted);
+      margin-right: 6px;
+      margin-bottom: 6px;
+      cursor: pointer
+    }
+
+    footer {
+      max-width: 1200px;
+      margin: 18px auto;
+      padding: 12px 18px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
     .chat-bubble {
-      position:fixed;
-      right:22px;
-      bottom:22px;
-      width:68px;
-      height:68px;
-      border-radius:50%;
-      background:linear-gradient(135deg,var(--accent1),var(--accent2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:28px;
-      cursor:pointer;
-      box-shadow:0 12px 30px rgba(6,182,212,0.12);
-      z-index:999;
-      transition:transform .2s ease;
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(6, 182, 212, 0.12);
+      z-index: 999;
+      transition: transform .2s ease;
     }
-    .chat-bubble:hover { transform:scale(1.1); }
 
-    /* Chat box - slide in/out animation */
+    .chat-bubble:hover {
+      transform: scale(1.1);
+    }
+
     .chat-box {
-      position:fixed;
-      right:-400px; /* comienza fuera de pantalla */
-      bottom:100px;
-      width:360px;
-      max-width:calc(100% - 44px);
-      background:linear-gradient(180deg,#07102a,#041022);
-      border-radius:12px;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      border:1px solid rgba(124,58,237,0.08);
-      z-index:1000;
-      opacity:0;
+      position: fixed;
+      right: -400px;
+      bottom: 100px;
+      width: 360px;
+      max-width: calc(100% - 44px);
+      background: linear-gradient(180deg, #07102a, #041022);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(124, 58, 237, 0.08);
+      z-index: 1000;
+      opacity: 0;
       transition:
-        right 0.5s cubic-bezier(.25,.8,.25,1.1),
+        right 0.5s cubic-bezier(.25, .8, .25, 1.1),
         opacity 0.4s ease;
     }
+
     .chat-box.open {
-      right:22px;
-      opacity:1;
+      right: 22px;
+      opacity: 1;
     }
 
-    .chat-header{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-    .chat-header .av{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#021}
-    .chat-title{font-weight:700}
-    .chat-messages{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:6px}
-    .bubble{padding:8px 10px;border-radius:12px;max-width:85%;line-height:1.15;word-break:break-word}
-    .bubble.user{align-self:flex-end;background:rgba(255,255,255,0.03);color:#e6eef8;border:1px solid rgba(255,255,255,0.02)}
-    .bubble.ai{align-self:flex-start;background:linear-gradient(90deg,#06b6d4, #7c3aed);color:#021;box-shadow:0 6px 18px rgba(124,58,237,0.08)}
-    .chat-controls{display:flex;gap:8px;margin-top:8px}
-    .chat-controls input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-    .chat-controls button{padding:10px 12px;border-radius:10px;border:0;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#021;font-weight:700;cursor:pointer}
-    @media (max-width:880px){ 
-      .layout{padding:0 12px} 
-      .chat-box{right:12px;left:12px;width:auto;bottom:92px} 
-      .controls{flex-direction:column;align-items:flex-start;gap:12px}
-      .search{flex-direction:column;align-items:flex-start;width:100%}
-      .search input{width:100%}
+    .chat-header {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px
+    }
+
+    .chat-header .av {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #021
+    }
+
+    .chat-title {
+      font-weight: 700
+    }
+
+    .chat-messages {
+      max-height: 260px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 6px
+    }
+
+    .bubble {
+      padding: 8px 10px;
+      border-radius: 12px;
+      max-width: 85%;
+      line-height: 1.15;
+      word-break: break-word
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: rgba(255, 255, 255, 0.03);
+      color: #e6eef8;
+      border: 1px solid rgba(255, 255, 255, 0.02)
+    }
+
+    .bubble.ai {
+      align-self: flex-start;
+      background: linear-gradient(90deg, #06b6d4, #7c3aed);
+      color: #021;
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.08)
+    }
+
+    .chat-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px
+    }
+
+    .chat-controls input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: transparent;
+      color: inherit
+    }
+
+    .chat-controls button {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 0;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: #021;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    @media (max-width:880px) {
+      .layout {
+        padding: 0 12px
+      }
+
+      .chat-box {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 92px
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px
+      }
+
+      .search {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%
+      }
+
+      .search input {
+        width: 100%
+      }
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 3px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(124, 58, 237, 0.3);
+      border-radius: 3px;
+    }
+
+    .bubble.system {
+      align-self: center;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      max-width: 70%;
+    }
+
+    .typing-indicator {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 12px;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-style: italic;
     }
   </style>
 </head>
+
 <body>
   <header>
     <h1> Catálogo de Videojuegos</h1>
@@ -115,7 +403,8 @@
   <main class="layout">
     <div class="controls">
       <div class="search">
-        <input id="search" placeholder="Buscar juegos, géneros, plataformas..." oninput="filterGrid()" style="min-width:320px" />
+        <input id="search" placeholder="Buscar juegos, géneros, plataformas..." oninput="filterGrid()"
+          style="min-width:320px" />
         <div class="filters">
           <div class="filter" onclick="loadAllGames()">Todos los juegos</div>
           <div class="filter" onclick="searchGames('acción')">Acción</div>
@@ -149,7 +438,8 @@
         <h4 style="margin-top:12px">Acciones rápidas</h4>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
           <button class="btn" onclick="sendMessage('mostrar todos los videojuegos')">Ver todos los juegos</button>
-          <button class="btn primary" onclick="sendMessage('recomiéndame los mejores juegos')">IA: Recomendaciones</button>
+          <button class="btn primary" onclick="sendMessage('recomiéndame los mejores juegos')">IA:
+            Recomendaciones</button>
         </div>
       </aside>
     </section>
@@ -171,7 +461,7 @@
     <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
 
     <div class="chat-controls">
-      <input id="chat-input" placeholder="Escribe tu mensaje..."/>
+      <input id="chat-input" placeholder="Escribe tu mensaje..." />
       <button id="chat-send">Enviar</button>
     </div>
   </div>
@@ -194,46 +484,58 @@
 
     // Mensajes de bienvenida
     const welcomeMessages = [
-      "Hola! Soy tu asistente de videojuegos. Puedo ayudarte a buscar en el catálogo real.",
-      "Puedes preguntarme: 'mostrar todos los videojuegos', 'buscar juegos de acción', 'mostrar juego con id 1'",
-      "También puedo crear nuevos juegos: 'crear juego Minecraft construcción 2024-12-01 59.99'"
+      "¡Hola! Soy tu asistente de videojuegos. 👋",
+      "Puedo ayudarte",
+      "Búsquedas en el catálogo: 'mostrar todos los videojuegos', 'buscar juegos de acción', 'buscar por ID' o 'crear nuevos juegos.'",
+      "¿En qué te puedo ayudar hoy?"
     ];
 
-    // 🔄 FUNCIÓN PARA CONECTAR CON LA API
+    //FUNCIÓN MEJORADA PARA CONECTAR CON LA API
     async function fetchFromAgent(consulta) {
       try {
+        // Mostrar indicador de carga
+        chatSend.disabled = true;
+        chatSend.textContent = '...';
+
         const response = await fetch('http://127.0.0.1:5000/query', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ consulta: consulta }),
         });
-        
+
         if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
         const result = await response.json();
         return result.resultado;
-        
+
       } catch (error) {
         console.error('Error al conectar con la API:', error);
-        addAIMessage('No se pudo conectar con el agente. Verifica que el servidor esté corriendo.');
+        addAIMessage('No se pudo conectar con el agente. Verifica que el servidor esté corriendo en http://127.0.0.1:5000');
         return null;
+      } finally {
+        // Restaurar botón
+        chatSend.disabled = false;
+        chatSend.textContent = 'Enviar';
       }
     }
 
-    // 🎮 FUNCIONES PARA RENDERIZAR JUEGOS
+
+
+
+    //FUNCIONES PARA RENDERIZAR JUEGOS
     function renderGrid(games = []) {
       grid.innerHTML = '';
-      
+
       if (!games || games.length === 0) {
         grid.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px">No se encontraron videojuegos</div>';
         totalEl.textContent = '0';
         onSaleEl.textContent = '0';
         return;
       }
-      
+
       games.forEach(game => {
         const card = document.createElement('article');
         card.className = 'card';
-        
+
         // Mostrar toda la información disponible
         card.innerHTML = `
           <div>
@@ -250,13 +552,13 @@
         `;
         grid.appendChild(card);
       });
-      
+
       totalEl.textContent = games.length;
       onSaleEl.textContent = games.length;
       currentGames = games;
     }
 
-    // 🔍 FUNCIONES DE BÚSQUEDA
+    // FUNCIONES DE BÚSQUEDA
     async function loadAllGames() {
       addAIMessage("Cargando todos los videojuegos...");
       const resultado = await fetchFromAgent('mostrar todos los videojuegos');
@@ -269,13 +571,22 @@
       handleAgentResponse(resultado);
     }
 
-    // 💬 MANEJO DE RESPUESTAS DEL AGENTE
+    // MANEJO DE RESPUESTAS DEL AGENTE
     function handleAgentResponse(resultado) {
       if (!resultado) return;
 
+      console.log("Respuesta del agente:", resultado); // Para debug
+
+      // Manejar respuestas conversacionales
+      if (resultado.is_conversational === true) {
+        addAIMessage(resultado.message || resultado.data);
+        return;
+      }
+
+      // Manejar respuestas de herramientas (funcionalidad existente)
       if (resultado.status === 'success') {
         const data = resultado.data;
-        
+
         // Si es un array de videojuegos
         if (Array.isArray(data)) {
           renderGrid(data);
@@ -293,19 +604,26 @@
           // Recargar lista después de crear
           setTimeout(() => loadAllGames(), 1000);
         }
-        else {
-          addAIMessage("Formato de respuesta no reconocido");
+        // Si es respuesta conversacional desde el nuevo sistema
+        else if (resultado.message && resultado.is_conversational !== false) {
+          addAIMessage(resultado.message);
         }
-      } 
-      else if (resultado.status === 'no_tool') {
+        else {
+          addAIMessage("Operación completada exitosamente");
+        }
+      }
+      else if (resultado.status === 'conversation') {
+        // Nueva respuesta conversacional
         addAIMessage(resultado.message);
+      }
+      else if (resultado.status === 'no_tool') {
+        addAIMessage(resultado.message || "No puedo procesar esa solicitud. Solo manejo operaciones de videojuegos.");
       }
       else {
         addAIMessage(resultado.message || "Error en la consulta");
       }
     }
 
-    // 💬 FUNCIONES DEL CHAT
     function addUserMessage(text) {
       const el = document.createElement('div');
       el.className = 'bubble user';
@@ -322,26 +640,42 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+    function showTypingIndicator() {
+      const indicator = document.createElement('div');
+      indicator.className = 'typing-indicator';
+      indicator.textContent = 'El asistente está escribiendo...';
+      indicator.id = 'typing-indicator';
+      chatMessages.appendChild(indicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+      const indicator = document.getElementById('typing-indicator');
+      if (indicator) {
+        indicator.remove();
+      }
+    }
+
     async function sendMessage(message) {
       if (!message.trim()) return;
-      
+
       addUserMessage(message);
       chatInput.value = '';
-      
-      // Mensaje especial para creación de juegos
-      if (message.toLowerCase().includes('crear juego') || message.toLowerCase().includes('crear videojuego')) {
-        addAIMessage("Creando juego...");
-      }
-      
+
+      showTypingIndicator();
+
       const resultado = await fetchFromAgent(message);
+
+      hideTypingIndicator();
+
       handleAgentResponse(resultado);
     }
 
-    // 🎯 EVENT LISTENERS
+
     bubble.addEventListener('click', () => {
       const isOpen = chatBox.classList.toggle('open');
       chatBox.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-      
+
       if (isOpen && chatMessages.children.length === 0) {
         welcomeMessages.forEach((m, i) => {
           setTimeout(() => {
@@ -362,15 +696,14 @@
       }
     });
 
-    // 📊 FUNCIONES DE FILTRADO
     function filterGrid() {
       const searchTerm = document.getElementById('search').value.toLowerCase();
       if (!searchTerm) {
         renderGrid(currentGames);
         return;
       }
-      
-      const filtered = currentGames.filter(game => 
+
+      const filtered = currentGames.filter(game =>
         (game.title && game.title.toLowerCase().includes(searchTerm)) ||
         (game.content0 && game.content0.toLowerCase().includes(searchTerm))
       );
@@ -381,7 +714,7 @@
       if (genre === 'todos') {
         renderGrid(currentGames);
       } else {
-        const filtered = currentGames.filter(game => 
+        const filtered = currentGames.filter(game =>
           game.content0 && game.content0.toLowerCase().includes(genre.toLowerCase())
         );
         renderGrid(filtered);
@@ -395,4 +728,5 @@
     });
   </script>
 </body>
+
 </html>

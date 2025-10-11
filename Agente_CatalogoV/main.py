@@ -29,26 +29,26 @@ def ejecutar_agente():
             consulta = input("\n🎯 Tu consulta: ").strip()
             
             if consulta.lower() in ['salir', 'exit', 'quit']:
-                print("👋 ¡Hasta luego!")
+                print("¡Hasta luego!")
                 break
             elif consulta.lower() == 'api':
-                print("🚀 Iniciando servidor API...")
+                print("Iniciando servidor API...")
                 from api_catalogo_videojuegos import app
                 app.run(debug=True, host="0.0.0.0", port=5000)
                 break
             elif consulta:
-                print("⏳ Procesando...")
+                print("Procesando...")
                 resultado = asyncio.run(main(consulta))
-                print("📦 Resultado:")
+                print("Resultado:")
                 print(resultado)
             else:
-                print("❌ Por favor, escribe una consulta válida")
+                print("Por favor, escribe una consulta válida")
                 
         except KeyboardInterrupt:
-            print("\n👋 ¡Hasta luego!")
+            print("\n¡Hasta luego!")
             break
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"Error: {e}")
 
 if __name__ == "__main__":
     ejecutar_agente()

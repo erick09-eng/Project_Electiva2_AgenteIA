@@ -73,7 +73,7 @@ async def main(prompt):
         args=["server_mcp_noticias.py"]
     )
 
-    print("📰 Cliente Noticias MCP iniciado")
+    print("Cliente Noticias MCP iniciado")
     print("Ejemplos: 'lista todas las noticias', 'buscar noticias tecnología', 'mostrar noticia con id 1'")
 
     async with stdio_client(server_params) as (read, write):
@@ -93,7 +93,7 @@ async def main(prompt):
                     if not tool_name_on_server:
                         return f"Error: Herramienta desconocida: {tool_name}"
 
-                    print(f"📰 LLM -> Herramienta: '{tool_name_on_server}', Args: {tool_args}")
+                    print(f"LLM -> Herramienta: '{tool_name_on_server}', Args: {tool_args}")
                     
                     result = await session.call_tool(tool_name_on_server, arguments=tool_args)
 

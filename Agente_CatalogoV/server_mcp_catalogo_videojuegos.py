@@ -15,7 +15,7 @@ class Videojuego(BaseModel):
     title: str
     content0: str
     fcdm: str
-    precio: float = 0           # ✅ NUEVO
+    precio: float = 0           
     disponible: bool = True  
 
 # --- 2. Contexto y Conexión a MongoDB ---
@@ -33,14 +33,14 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
         db = client["videojuegos"]
         games_collection = db["catalogo"]
         
-        print("✅ Conectado a MongoDB - videojuegos.catalogo")
+        print("Conectado a MongoDB - videojuegos.catalogo")
         yield AppContext(
             mongo_client=client,
             db=db, 
             games_collection=games_collection
         )
     except Exception as e:
-        print(f"❌ Error conectando a MongoDB: {e}")
+        print(f"Error conectando a MongoDB: {e}")
         raise
     finally:
         if 'client' in locals():
@@ -65,7 +65,7 @@ async def get_all_games(ctx: Context) -> List[Videojuego]:
             title=document.get("titulo", ""),
             content0=document.get("descripcion", ""),
             fcdm=document.get("fecha_lanzamiento", ""),
-            precio=document.get("precio", 0),              # ✅ NUEVO: precio
+            precio=document.get("precio", 0),              
             disponible=document.get("disponible", True)  
         )
         games.append(game)
@@ -87,7 +87,7 @@ async def get_game_by_id(game_id: int, ctx: Context) -> List[Videojuego]:
             title=document.get("titulo", ""),
             content0=document.get("descripcion", ""),
             fcdm=document.get("fecha_lanzamiento", ""),
-            precio=document.get("precio", 0),              # ✅ NUEVO: precio
+            precio=document.get("precio", 0),              
             disponible=document.get("disponible", True)  
         )
         games.append(game)
@@ -110,7 +110,7 @@ async def search_games_by_title(title: str, ctx: Context) -> List[Videojuego]:
             title=document.get("titulo", ""),
             content0=document.get("descripcion", ""),
             fcdm=document.get("fecha_lanzamiento", ""),
-            precio=document.get("precio", 0),              # ✅ NUEVO: precio
+            precio=document.get("precio", 0),              
             disponible=document.get("disponible", True)  
         )
         games.append(game)
@@ -137,7 +137,7 @@ async def create_game(titulo: str, descripcion: str, fecha_lanzamiento: str, pre
     }
     
     collection.insert_one(nuevo_juego)
-    return f"✅ Videojuego '{titulo}' creado con ID {next_id}"
+    return f"Videojuego '{titulo}' creado con ID {next_id}"
 
 # --- 5. Ejecución del Servidor ---
 if __name__ == "__main__":
