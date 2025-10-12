@@ -67,6 +67,6 @@ def info():
 
 if __name__ == "__main__":
     print("API de Agente de Noticias iniciada")
-    print("Endpoint principal: POST http://localhost:5001/query")  # Puerto diferente
+    print("Endpoint principal: POST http://localhost:5001/query")  
     print("Health check: GET http://localhost:5001/health")
-    app.run(debug=True, host="0.0.0.0", port=5001)  # Puerto 5001 para no conflictos
+    app.run(debug=True, host="0.0.0.0", port=5001)  
