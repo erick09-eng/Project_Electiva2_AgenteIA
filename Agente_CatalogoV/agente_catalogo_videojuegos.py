@@ -11,7 +11,6 @@ from mcp.client.stdio import stdio_client
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# --- CLASE CONVERSACIONAL NUEVA ---
 class ConversationManager:
     def __init__(self):
         self.greetings = ['hola', 'hello', 'hi', 'hey', 'buenos días', 'buenas tardes', 'qué tal']

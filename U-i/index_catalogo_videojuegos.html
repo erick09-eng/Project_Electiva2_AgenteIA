@@ -25,6 +25,7 @@
       margin: 0;
       background: linear-gradient(180deg, #05060a 0%, #071021 100%);
       min-height: 100vh;
+      overflow: hidden;
     }
 
     header {
@@ -32,31 +33,36 @@
       background: linear-gradient(90deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.06));
       display: flex;
       align-items: center;
-      gap: 12px
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
     }
 
     header h1 {
       margin: 0;
-      font-size: 18px
+      font-size: 18px;
     }
 
     .layout {
       max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 18px;
+      margin: 0 auto;
+      padding: 20px 18px;
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
     }
 
     .controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px
+      margin-bottom: 20px;
+      flex-shrink: 0;
     }
 
     .search {
       display: flex;
       gap: 8px;
-      align-items: center
+      align-items: center;
     }
 
     .search input {
@@ -64,13 +70,13 @@
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       background: transparent;
-      color: inherit
+      color: inherit;
     }
 
     .filters {
       display: flex;
       gap: 8px;
-      align-items: center
+      align-items: center;
     }
 
     .filter {
@@ -79,24 +85,51 @@
       background: var(--card-ghost);
       font-size: 13px;
       color: var(--muted);
-      cursor: pointer
+      cursor: pointer;
+    }
+
+    .content-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .games-section {
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 20px;
+      min-height: 0;
+    }
+
+    .games-section h2 {
+      margin: 0 0 16px 0;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .games-container {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px
+      gap: 16px;
     }
 
     .card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent);
+      border-radius: 10px;
       padding: 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      min-height: 180px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      color: inherit;
     }
 
     .card .cover {
@@ -108,58 +141,35 @@
       justify-content: center;
       color: var(--muted);
       font-size: 13px;
-      margin-bottom: 12px
+      margin-bottom: 12px;
     }
 
     .card h3 {
       margin: 0 0 8px 0;
       font-size: 16px;
-      color: #fff
+      color: #fff;
     }
 
     .meta {
       font-size: 13px;
       color: var(--muted);
       margin-bottom: 8px;
-      line-height: 1.4
+      line-height: 1.4;
     }
 
     .game-info {
       font-size: 12px;
       color: var(--muted);
-      margin-top: 8px
+      margin-top: 8px;
     }
 
     .game-info div {
-      margin-bottom: 4px
+      margin-bottom: 4px;
     }
 
     .price {
       font-weight: 700;
-      color: #fff
-    }
-
-    .card .actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 12px
-    }
-
-    .btn {
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 0;
-      cursor: pointer;
-      background: var(--card-ghost);
-      color: var(--muted);
-      font-size: 13px
-    }
-
-    .btn.primary {
-      background: linear-gradient(90deg, var(--accent1), var(--accent2));
-      color: #021;
-      font-weight: 700
+      color: #fff;
     }
 
     .empty-cover {
@@ -170,19 +180,19 @@
       align-items: center;
       justify-content: center;
       color: var(--muted);
-      font-size: 13px
+      font-size: 13px;
     }
 
     .summary {
-      margin-top: 18px;
-      padding: 12px;
-      border-radius: 12px;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+      border-radius: 12px;
+      padding: 20px;
       border: 1px solid rgba(255, 255, 255, 0.03);
+      height: fit-content;
     }
 
     .summary h4 {
-      margin: 0 0 8px 0
+      margin: 0 0 8px 0;
     }
 
     .tag {
@@ -194,7 +204,25 @@
       color: var(--muted);
       margin-right: 6px;
       margin-bottom: 6px;
-      cursor: pointer
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 0;
+      cursor: pointer;
+      background: var(--card-ghost);
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+      width: 100%;
+    }
+
+    .btn.primary {
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color: #021;
+      font-weight: 700;
     }
 
     footer {
@@ -202,7 +230,7 @@
       margin: 18px auto;
       padding: 12px 18px;
       color: var(--muted);
-      font-size: 13px
+      font-size: 13px;
     }
 
     .chat-bubble {
@@ -241,9 +269,7 @@
       border: 1px solid rgba(124, 58, 237, 0.08);
       z-index: 1000;
       opacity: 0;
-      transition:
-        right 0.5s cubic-bezier(.25, .8, .25, 1.1),
-        opacity 0.4s ease;
+      transition: right 0.5s cubic-bezier(.25, .8, .25, 1.1), opacity 0.4s ease;
     }
 
     .chat-box.open {
@@ -255,7 +281,7 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      margin-bottom: 8px
+      margin-bottom: 8px;
     }
 
     .chat-header .av {
@@ -267,11 +293,11 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      color: #021
+      color: #021;
     }
 
     .chat-title {
-      font-weight: 700
+      font-weight: 700;
     }
 
     .chat-messages {
@@ -280,7 +306,8 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      padding-right: 6px
+      padding-right: 6px;
+      margin-bottom: 8px;
     }
 
     .bubble {
@@ -288,27 +315,27 @@
       border-radius: 12px;
       max-width: 85%;
       line-height: 1.15;
-      word-break: break-word
+      word-break: break-word;
     }
 
     .bubble.user {
       align-self: flex-end;
       background: rgba(255, 255, 255, 0.03);
       color: #e6eef8;
-      border: 1px solid rgba(255, 255, 255, 0.02)
+      border: 1px solid rgba(255, 255, 255, 0.02);
     }
 
     .bubble.ai {
       align-self: flex-start;
       background: linear-gradient(90deg, #06b6d4, #7c3aed);
       color: #021;
-      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.08)
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.08);
     }
 
     .chat-controls {
       display: flex;
       gap: 8px;
-      margin-top: 8px
+      margin-top: 8px;
     }
 
     .chat-controls input {
@@ -317,7 +344,7 @@
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       background: transparent;
-      color: inherit
+      color: inherit;
     }
 
     .chat-controls button {
@@ -327,36 +354,26 @@
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
       color: #021;
       font-weight: 700;
-      cursor: pointer
+      cursor: pointer;
     }
 
-    @media (max-width:880px) {
-      .layout {
-        padding: 0 12px
-      }
+    /* Scrollbars */
+    .games-container::-webkit-scrollbar {
+      width: 8px;
+    }
 
-      .chat-box {
-        right: 12px;
-        left: 12px;
-        width: auto;
-        bottom: 92px
-      }
+    .games-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 4px;
+    }
 
-      .controls {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px
-      }
+    .games-container::-webkit-scrollbar-thumb {
+      background: rgba(124, 58, 237, 0.3);
+      border-radius: 4px;
+    }
 
-      .search {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%
-      }
-
-      .search input {
-        width: 100%
-      }
+    .games-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(124, 58, 237, 0.5);
     }
 
     .chat-messages::-webkit-scrollbar {
@@ -373,15 +390,6 @@
       border-radius: 3px;
     }
 
-    .bubble.system {
-      align-self: center;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-      max-width: 70%;
-    }
-
     .typing-indicator {
       align-self: flex-start;
       background: rgba(255, 255, 255, 0.05);
@@ -391,20 +399,66 @@
       font-size: 12px;
       font-style: italic;
     }
+
+    @media (max-width: 880px) {
+      .layout {
+        padding: 0 12px;
+        height: auto;
+      }
+
+      body {
+        overflow: visible;
+      }
+
+      .content-wrapper {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .games-section {
+        min-height: 400px;
+      }
+
+      .games-container {
+        max-height: 400px;
+      }
+
+      .chat-box {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 92px;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .search {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+      }
+
+      .search input {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 
 <body>
   <header>
-    <h1> Catálogo de Videojuegos</h1>
+    <h1>Catálogo de Videojuegos</h1>
     <div style="margin-left:auto;color:var(--muted);font-size:13px">Conectado a base de datos real</div>
   </header>
 
   <main class="layout">
     <div class="controls">
       <div class="search">
-        <input id="search" placeholder="Buscar juegos, géneros, plataformas..." oninput="filterGrid()"
-          style="min-width:320px" />
+        <input id="search" placeholder="Buscar juegos, géneros, plataformas..." oninput="filterGrid()" style="min-width:320px" />
         <div class="filters">
           <div class="filter" onclick="loadAllGames()">Todos los juegos</div>
           <div class="filter" onclick="searchGames('acción')">Acción</div>
@@ -417,12 +471,15 @@
       </div>
     </div>
 
-    <section style="display:grid;grid-template-columns:1fr 320px;gap:18px">
-      <div>
-        <div class="grid" id="grid"></div>
+    <div class="content-wrapper">
+      <div class="games-section">
+        <h2>Videojuegos</h2>
+        <div class="games-container" id="games-container">
+          <div class="grid" id="grid"></div>
+        </div>
       </div>
 
-      <aside class="summary" aria-label="Resumen del catálogo">
+      <aside class="summary">
         <h4>Resumen</h4>
         <div style="margin-bottom:8px;color:var(--muted)">Categorías y búsquedas rápidas</div>
         <div class="tag" onclick="searchGames('acción')">Acción</div>
@@ -431,18 +488,15 @@
         <div class="tag" onclick="searchGames('deportes')">Deportes</div>
         <div class="tag" onclick="searchGames('estrategia')">Estrategia</div>
 
-        <h4 style="margin-top:12px">Estadísticas</h4>
+        <h4 style="margin-top:16px">Estadísticas</h4>
         <div style="margin-top:8px;color:var(--muted)">Juegos totales: <strong id="total">0</strong></div>
         <div style="margin-top:6px;color:var(--muted)">En catálogo: <strong id="onSale">0</strong></div>
 
-        <h4 style="margin-top:12px">Acciones rápidas</h4>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-          <button class="btn" onclick="sendMessage('mostrar todos los videojuegos')">Ver todos los juegos</button>
-          <button class="btn primary" onclick="sendMessage('recomiéndame los mejores juegos')">IA:
-            Recomendaciones</button>
-        </div>
+        <h4 style="margin-top:16px">Acciones rápidas</h4>
+        <button class="btn" onclick="sendMessage('mostrar todos los videojuegos')">Ver todos los juegos</button>
+        <button class="btn primary" onclick="sendMessage('recomiéndame los mejores juegos')">IA: Recomendaciones</button>
       </aside>
-    </section>
+    </div>
   </main>
 
   <!-- Chat bubble -->
@@ -474,6 +528,7 @@
 
     // Elementos del DOM
     const grid = document.getElementById('grid');
+    const gamesContainer = document.getElementById('games-container');
     const totalEl = document.getElementById('total');
     const onSaleEl = document.getElementById('onSale');
     const bubble = document.getElementById('chat-bubble');
@@ -482,18 +537,15 @@
     const chatInput = document.getElementById('chat-input');
     const chatSend = document.getElementById('chat-send');
 
-    // Mensajes de bienvenida
+    // Mensajes de bienvenida simplificados
     const welcomeMessages = [
-      "¡Hola! Soy tu asistente de videojuegos. 👋",
-      "Puedo ayudarte",
-      "Búsquedas en el catálogo: 'mostrar todos los videojuegos', 'buscar juegos de acción', 'buscar por ID' o 'crear nuevos juegos.'",
-      "¿En qué te puedo ayudar hoy?"
+      "Hola! Soy tu asistente de videojuegos.",
+      "Puedo ayudarte a buscar y gestionar videojuegos en la base de datos."
     ];
 
-    //FUNCIÓN MEJORADA PARA CONECTAR CON LA API
+    // Funcion para conectar con la API
     async function fetchFromAgent(consulta) {
       try {
-        // Mostrar indicador de carga
         chatSend.disabled = true;
         chatSend.textContent = '...';
 
@@ -509,19 +561,15 @@
 
       } catch (error) {
         console.error('Error al conectar con la API:', error);
-        addAIMessage('No se pudo conectar con el agente. Verifica que el servidor esté corriendo en http://127.0.0.1:5000');
+        addAIMessage('No se pudo conectar con el agente. Verifica que el servidor este corriendo en http://127.0.0.1:5000');
         return null;
       } finally {
-        // Restaurar botón
         chatSend.disabled = false;
         chatSend.textContent = 'Enviar';
       }
     }
 
-
-
-
-    //FUNCIONES PARA RENDERIZAR JUEGOS
+    // Funciones para renderizar juegos
     function renderGrid(games = []) {
       grid.innerHTML = '';
 
@@ -536,17 +584,16 @@
         const card = document.createElement('article');
         card.className = 'card';
 
-        // Mostrar toda la información disponible
         card.innerHTML = `
           <div>
             <div class="cover empty-cover">🎮</div>
-            <h3>${game.title || 'Sin título'}</h3>
-            <div class="meta">${game.content0 || 'Sin descripción disponible'}</div>
+            <h3>${game.title || 'Sin titulo'}</h3>
+            <div class="meta">${game.content0 || 'Sin descripcion disponible'}</div>
             <div class="game-info">
               <div><strong>ID:</strong> ${game.id || 'N/A'}</div>
               <div><strong>Fecha:</strong> ${game.fcdm || 'No especificada'}</div>
               ${game.precio ? `<div><strong>Precio:</strong> $${game.precio}</div>` : ''}
-              ${game.disponible !== undefined ? `<div><strong>Disponible:</strong> ${game.disponible ? 'Sí' : 'No'}</div>` : ''}
+              ${game.disponible !== undefined ? `<div><strong>Disponible:</strong> ${game.disponible ? 'Si' : 'No'}</div>` : ''}
             </div>
           </div>
         `;
@@ -558,7 +605,7 @@
       currentGames = games;
     }
 
-    // FUNCIONES DE BÚSQUEDA
+    // Funciones de busqueda
     async function loadAllGames() {
       addAIMessage("Cargando todos los videojuegos...");
       const resultado = await fetchFromAgent('mostrar todos los videojuegos');
@@ -571,49 +618,41 @@
       handleAgentResponse(resultado);
     }
 
-    // MANEJO DE RESPUESTAS DEL AGENTE
+    // Manejo de respuestas del agente
     function handleAgentResponse(resultado) {
       if (!resultado) return;
 
-      console.log("Respuesta del agente:", resultado); // Para debug
+      console.log("Respuesta del agente:", resultado);
 
-      // Manejar respuestas conversacionales
       if (resultado.is_conversational === true) {
         addAIMessage(resultado.message || resultado.data);
         return;
       }
 
-      // Manejar respuestas de herramientas (funcionalidad existente)
       if (resultado.status === 'success') {
         const data = resultado.data;
 
-        // Si es un array de videojuegos
         if (Array.isArray(data)) {
           renderGrid(data);
-          addAIMessage(`Encontré ${data.length} videojuego(s)`);
+          addAIMessage(`Encontre ${data.length} videojuego(s)`);
         }
-        // Si data tiene propiedad result con array
         else if (data && Array.isArray(data.result)) {
           renderGrid(data.result);
-          addAIMessage(`Encontré ${data.result.length} videojuego(s)`);
+          addAIMessage(`Encontre ${data.result.length} videojuego(s)`);
         }
-        // Si es mensaje de creación
         else if (typeof data === 'string' || (data && typeof data.result === 'string')) {
           const mensaje = typeof data === 'string' ? data : data.result;
           addAIMessage(mensaje);
-          // Recargar lista después de crear
           setTimeout(() => loadAllGames(), 1000);
         }
-        // Si es respuesta conversacional desde el nuevo sistema
         else if (resultado.message && resultado.is_conversational !== false) {
           addAIMessage(resultado.message);
         }
         else {
-          addAIMessage("Operación completada exitosamente");
+          addAIMessage("Operacion completada exitosamente");
         }
       }
       else if (resultado.status === 'conversation') {
-        // Nueva respuesta conversacional
         addAIMessage(resultado.message);
       }
       else if (resultado.status === 'no_tool') {
@@ -643,7 +682,7 @@
     function showTypingIndicator() {
       const indicator = document.createElement('div');
       indicator.className = 'typing-indicator';
-      indicator.textContent = 'El asistente está escribiendo...';
+      indicator.textContent = 'El asistente esta escribiendo...';
       indicator.id = 'typing-indicator';
       chatMessages.appendChild(indicator);
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -670,7 +709,6 @@
 
       handleAgentResponse(resultado);
     }
-
 
     bubble.addEventListener('click', () => {
       const isOpen = chatBox.classList.toggle('open');
@@ -710,23 +748,9 @@
       renderGrid(filtered);
     }
 
-    function applyFilter(genre) {
-      if (genre === 'todos') {
-        renderGrid(currentGames);
-      } else {
-        const filtered = currentGames.filter(game =>
-          game.content0 && game.content0.toLowerCase().includes(genre.toLowerCase())
-        );
-        renderGrid(filtered);
-      }
-    }
-
-    // 🚀 INICIALIZACIÓN
     document.addEventListener('DOMContentLoaded', () => {
-      // Cargar juegos al iniciar
       setTimeout(() => loadAllGames(), 1000);
     });
   </script>
 </body>
-
 </html>
