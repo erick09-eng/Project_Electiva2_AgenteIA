@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+# from flask_cors import CORS
 from agente_catalogo_videojuegos import main as agent_main
 import asyncio
 import json
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
 @app.route("/query", methods=["POST"])
 def procesar_consulta():
