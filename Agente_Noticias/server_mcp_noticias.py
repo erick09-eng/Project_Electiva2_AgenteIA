@@ -129,6 +129,115 @@ async def create_news(titulo: str, contenido: str, fecha: str, ctx: Context) -> 
     collection.insert_one(nueva_noticia)
     return f"Noticia '{titulo}' creada con ID {next_id}"
 
+# --- HERRAMIENTAS NUEVAS CRUD (CORREGIDAS) ---
+
+@mcp.tool()
+async def update_news(ctx: Context, news_id: int, titulo: Optional[str] = None, contenido: Optional[str] = None, 
+                     fecha: Optional[str] = None) -> str:
+    """
+    Actualiza una noticia existente por ID.
+    """
+    collection = ctx.request_context.lifespan_context.noticias_collection
+    
+    # Verificar que la noticia existe
+    existing_news = collection.find_one({"id": news_id})
+    if not existing_news:
+        return f"Error: No se encontró noticia con ID {news_id}"
+    
+    # Preparar campos a actualizar
+    update_fields = {}
+    if titulo is not None:
+        update_fields["titulo"] = titulo
+    if contenido is not None:
+        update_fields["contenido"] = contenido
+    if fecha is not None:
+        update_fields["fecha"] = fecha
+    
+    if update_fields:
+        collection.update_one({"id": news_id}, {"$set": update_fields})
+        return f"Noticia ID {news_id} actualizada correctamente"
+    else:
+        return "No se proporcionaron campos para actualizar"
+
+@mcp.tool()
+async def update_news_by_title(ctx: Context, titulo: str, nuevo_titulo: Optional[str] = None, 
+                              contenido: Optional[str] = None, fecha: Optional[str] = None) -> str:
+    """
+    Actualiza una noticia existente por título.
+    """
+    collection = ctx.request_context.lifespan_context.noticias_collection
+    
+    # Verificar que la noticia existe
+    existing_news = collection.find_one({"titulo": titulo})
+    if not existing_news:
+        return f"Error: No se encontró noticia con título '{titulo}'"
+    
+    # Preparar campos a actualizar
+    update_fields = {}
+    if nuevo_titulo is not None:
+        update_fields["titulo"] = nuevo_titulo
+    if contenido is not None:
+        update_fields["contenido"] = contenido
+    if fecha is not None:
+        update_fields["fecha"] = fecha
+    
+    if update_fields:
+        collection.update_one({"titulo": titulo}, {"$set": update_fields})
+        return f"Noticia '{titulo}' actualizada correctamente"
+    else:
+        return "No se proporcionaron campos para actualizar"
+
+@mcp.tool()
+async def delete_news(ctx: Context, news_id: int) -> str:
+    """
+    Elimina permanentemente una noticia por ID.
+    """
+    collection = ctx.request_context.lifespan_context.noticias_collection
+    
+    # Verificar que la noticia existe
+    existing_news = collection.find_one({"id": news_id})
+    if not existing_news:
+        return f"Error: No se encontró noticia con ID {news_id}"
+    
+    collection.delete_one({"id": news_id})
+    return f"Noticia ID {news_id} eliminada correctamente"
+
+@mcp.tool()
+async def delete_news_by_title(ctx: Context, titulo: str) -> str:
+    """
+    Elimina permanentemente una noticia por título.
+    """
+    collection = ctx.request_context.lifespan_context.noticias_collection
+    
+    # Verificar que la noticia existe
+    existing_news = collection.find_one({"titulo": titulo})
+    if not existing_news:
+        return f"Error: No se encontró noticia con título '{titulo}'"
+    
+    collection.delete_one({"titulo": titulo})
+    return f"Noticia '{titulo}' eliminada correctamente"
+
+@mcp.tool()
+async def search_news_by_content(ctx: Context, contenido: str) -> List[Noticia]:
+    """
+    Busca noticias por contenido (búsqueda parcial).
+    """
+    collection = ctx.request_context.lifespan_context.noticias_collection
+    noticias = []
+    
+    query = {"contenido": {"$regex": contenido, "$options": "i"}}
+    
+    for document in collection.find(query):
+        noticia = Noticia(
+            id=document.get("id", 0),
+            titulo=document.get("titulo", ""),
+            contenido=document.get("contenido", ""),
+            fecha=document.get("fecha", "")
+        )
+        noticias.append(noticia)
+    
+    return noticias
+
 # --- 5. Ejecución del Servidor ---
 if __name__ == "__main__":
     print("Iniciando servidor MCP para Noticias...")
